@@ -52,8 +52,11 @@ def import_plates_schedule(filepath, graph=False):
 
 
 def generate_schedule(num_plate=500, graph=False):
-    inter_arrival_time = np.floor(stats.expon.rvs(loc=0.0, scale=0.273, size=num_plate))
-    stock_time = np.floor(stats.beta.rvs(1.85, 32783.4, loc=2.52, scale=738938.8, size=num_plate))
+    #inter_arrival_time = np.floor(stats.expon.rvs(loc=0.0, scale=0.273, size=num_plate))
+    #stock_time = np.floor(stats.beta.rvs(1.85, 32783.4, loc=2.52, scale=738938.8, size=num_plate))
+    inter_arrival_time = [0 for _ in range(num_plate)]
+    #stock_time = np.floor(stats.beta.rvs(4.39, 0.227, loc=0.608, scale=6.39, size=num_plate)) #week
+    stock_time = np.sort(stats.uniform.rvs(loc=0.0, scale=100.0, size=num_plate))[::-1]
     current_date = 0
     plates = [[]]
     for i in range(num_plate):
@@ -77,7 +80,7 @@ def generate_schedule(num_plate=500, graph=False):
     return plates
 
 
-def import_plates_schedule_by_week(filepath):
+def import_plates_schedule_by_week(filepath, graph=False):
     df_schedule = pd.read_csv(filepath, encoding='euc-kr')
     df_schedule.dropna(subset=['자재번호', '최근입고일', '블록S/C일자'], inplace=True)
     df_schedule['최근입고일'] = pd.to_datetime(df_schedule['최근입고일'], format='%Y.%m.%d')
@@ -109,6 +112,17 @@ def import_plates_schedule_by_week(filepath):
             df_schedule.reset_index(drop=True, inplace=True)
         random.shuffle(plates_by_week)
         day += 7
+
+        if graph:
+            stock_time = [plate.outbound - plate.inbound for plate in plates_by_week]
+            #a, b, loc_beta, scale_beta = stats.beta.fit(stock_time)
+            fig, ax = plt.subplots(1, 1, squeeze=False)
+            ax[0][0].set_title('Stock Time')
+            ax[0][0].set_xlabel('time')
+            ax[0][0].set_ylabel('normalized frequency of occurrence')
+            ax[0][0].hist(list(stock_time), bins=100)
+            plt.tight_layout()
+            plt.show()
 
     return plates
 
@@ -156,6 +170,7 @@ class Plate(object):
 
 if __name__ == "__main__":
     #inbounds = import_plates_schedule_rev('../environment/data/SampleData.csv', graph=True)
-    inbounds = generate_schedule(graph=True)
+    #inbounds = import_plates_schedule_by_week('../environment/data/SampleData.csv', graph=True)
+    inbounds = generate_schedule(num_plate=60, graph=True)
     length = [len(_) for _ in inbounds]
     print(np.max(length), np.argmax(length))

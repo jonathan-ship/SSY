@@ -123,6 +123,6 @@ def color_frame_continuous(images, dim=2):
                     if images[k, i, j] == -1.0:
                         colored_images[k, i, j] = [0, 0, 0]
                     else:
-                        grey = max(0, 255 - 0.1 * 255 * images[k, i, j])
+                        grey = max(0, 255 - 0.01 * 255 * images[k, i, j])
                         colored_images[k, i, j] = [grey, grey, grey]
     return colored_images
