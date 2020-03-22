@@ -44,6 +44,8 @@ class Locating(object):  # 생성자에서 파일의 수, 최대 높이 등을 �
             self.current_date = self.inbound_plates[0].inbound
             self._export_plates()
         next_state = self._get_state()  # 쌓인 강재들 리스트에서 state 를 계산
+        if done:
+            next_state = self._export_all_plates()
         return next_state, reward, done
 
     def reset(self, episode=4, hold=True):
@@ -52,7 +54,7 @@ class Locating(object):  # 생성자에서 파일의 수, 최대 높이 등을 �
             self.inbound_clone = self.inbound_plates[:]
         else:
             self.inbound_plates = self.inbound_clone[(episode-1) % len(self.inbound_clone)][:]
-            #random.shuffle(self.inbound_plates)
+            random.shuffle(self.inbound_plates)
         self.plates = [[] for _ in range(self.action_space)]
         self.current_date = min(self.inbound_plates, key=lambda x: x.inbound).inbound
         self.stage = 0
@@ -99,6 +101,19 @@ class Locating(object):  # 생성자에서 파일의 수, 최대 높이 등을 �
                     outbounds.append(i)
             for index in outbounds[::-1]:
                 del pile[index]
+
+    def _export_all_plates(self):
+        next_states = []
+        while True:
+            next_outbound_date = min(sum(self.plates, []), key=lambda x: x.outbound).outbound
+            if next_outbound_date != self.current_date:
+                self.current_date = next_outbound_date
+                self._export_plates()
+                next_state = self._get_state()
+                next_states.append(next_state)
+            if not sum(self.plates, []):
+                break
+        return next_states
 
 
 # 환경을 가시화하는 용도, 사람이 action 을 입력해야하므로 학습시에는 실행하지 않음

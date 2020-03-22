@@ -118,6 +118,7 @@ class Worker():
                         if not d:
                             episode_frames.append(s1)
                         else:
+                            episode_frames.extend(s1)
                             s1 = s
 
                         episode_buffer.append([s, a, r, s1, d, v[0, 0]])
@@ -180,7 +181,8 @@ class Worker():
 
 
 if __name__ == '__main__':
-    inbounds = import_plates_schedule_by_week('../../environment/data/SampleData.csv')
+    #inbounds = import_plates_schedule_by_week('../../environment/data/SampleData.csv')
+    inbounds = generate_schedule(num_plate=50)
     max_episode_length = 300
     max_episode = 50000
     gamma = .99  # discount rate for advantage estimation and reward discounting
