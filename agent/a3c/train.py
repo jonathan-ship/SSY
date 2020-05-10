@@ -45,6 +45,7 @@ class Worker():
         self.episode_rewards = []
         self.episode_lengths = []
         self.episode_mean_values = []
+        self.episode_moves = []
         self.summary_writer = tf.summary.FileWriter(self.summary_path + "/train_" + str(self.number))
 
         # Create the local copy of the network and the tensorflow op to copy global paramters to local network
@@ -147,6 +148,7 @@ class Worker():
                     self.episode_rewards.append(episode_reward)
                     self.episode_lengths.append(episode_step_count)
                     self.episode_mean_values.append(np.mean(episode_values))
+                    self.episode_moves.append(self.env.crane_move)
 
                     # Update the network using the episode buffer at the end of the episode.
                     if len(episode_buffer) != 0:
@@ -163,10 +165,12 @@ class Worker():
                         mean_reward = np.mean(self.episode_rewards[-5:])
                         mean_length = np.mean(self.episode_lengths[-5:])
                         mean_value = np.mean(self.episode_mean_values[-5:])
+                        mean_move = np.mean(self.episode_moves[-5:])
                         summary = tf.Summary()
                         summary.value.add(tag='Perf/Reward', simple_value=float(mean_reward))
                         summary.value.add(tag='Perf/Length', simple_value=float(mean_length))
                         summary.value.add(tag='Perf/Value', simple_value=float(mean_value))
+                        summary.value.add(tag='Perf/Move', simple_value=float(mean_move))
                         summary.value.add(tag='Losses/Value Loss', simple_value=float(v_l))
                         summary.value.add(tag='Losses/Policy Loss', simple_value=float(p_l))
                         summary.value.add(tag='Losses/Entropy', simple_value=float(e_l))

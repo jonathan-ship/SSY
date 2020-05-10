@@ -15,6 +15,7 @@ class Locating(object):  # 생성자에서 파일의 수, 최대 높이 등을 �
         self.empty = -1  # 빈 공간의 상태 표현 값
         self.stage = 0
         self.current_date = 0
+        self.crane_move = 0
         self.plates = [[] for _ in range(num_pile)]  # 각 파일을 빈 리스트로 초기화
         self.n_features = max_stack * num_pile
         self.observe_inbounds = observe_inbounds
@@ -57,6 +58,7 @@ class Locating(object):  # 생성자에서 파일의 수, 최대 높이 등을 �
             random.shuffle(self.inbound_plates)
         self.plates = [[] for _ in range(self.action_space)]
         self.current_date = min(self.inbound_plates, key=lambda x: x.inbound).inbound
+        self.crane_move = 0
         self.stage = 0
         return self._get_state()
 
@@ -99,6 +101,8 @@ class Locating(object):  # 생성자에서 파일의 수, 최대 높이 등을 �
             for i, plate in enumerate(pile):
                 if plate.outbound <= self.current_date:
                     outbounds.append(i)
+            if len(outbounds) > 0:
+                self.crane_move += (len(pile) - outbounds[0] - len(outbounds))
             for index in outbounds[::-1]:
                 del pile[index]
 

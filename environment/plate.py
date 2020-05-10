@@ -51,7 +51,7 @@ def import_plates_schedule(filepath, graph=False):
     return plates
 
 
-def generate_schedule(num_plate=500, graph=False):
+def generate_schedule(num_plate=50, graph=False):
     #inter_arrival_time = np.floor(stats.expon.rvs(loc=0.0, scale=0.273, size=num_plate))
     #stock_time = np.floor(stats.beta.rvs(1.85, 32783.4, loc=2.52, scale=738938.8, size=num_plate))
     inter_arrival_time = [0 for _ in range(num_plate)]
