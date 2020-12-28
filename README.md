@@ -28,6 +28,7 @@ This module requires the following modules:
 + numpy==1.18.5
 + pandas
 + matplotlib
++ PyCharm under version of 2020.1
 
 
 
