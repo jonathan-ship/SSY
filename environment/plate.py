@@ -6,8 +6,6 @@ import matplotlib.pyplot as plt
 
 from datetime import datetime
 
-random.seed = 42
-
 
 def import_ex_plates_schedule(filepath):
     df_schedule = pd.read_csv(filepath, encoding='euc-kr')
@@ -51,12 +49,12 @@ def import_plates_schedule(filepath, graph=False):
     return plates
 
 
-def generate_schedule(num_plate=50, graph=False):
-    #inter_arrival_time = np.floor(stats.expon.rvs(loc=0.0, scale=0.273, size=num_plate))
-    #stock_time = np.floor(stats.beta.rvs(1.85, 32783.4, loc=2.52, scale=738938.8, size=num_plate))
-    inter_arrival_time = [0 for _ in range(num_plate)]
+def generate_schedule(num_plate=254, graph=False):
+    inter_arrival_time = np.floor(stats.expon.rvs(loc=0.0, scale=0.273, size=num_plate))
+    stock_time = np.floor(stats.beta.rvs(1.85, 32783.4, loc=2.52, scale=738938.8, size=num_plate))
+    #inter_arrival_time = [0 for _ in range(num_plate)]
     #stock_time = np.floor(stats.beta.rvs(4.39, 0.227, loc=0.608, scale=6.39, size=num_plate)) #week
-    stock_time = np.sort(stats.uniform.rvs(loc=0.0, scale=100.0, size=num_plate))[::-1]
+    #stock_time = np.sort(stats.uniform.rvs(loc=0.0, scale=100.0, size=num_plate))[::-1]
     current_date = 0
     plates = [[]]
     for i in range(num_plate):
@@ -169,8 +167,15 @@ class Plate(object):
 
 
 if __name__ == "__main__":
-    #inbounds = import_plates_schedule_rev('../environment/data/SampleData.csv', graph=True)
-    #inbounds = import_plates_schedule_by_week('../environment/data/SampleData.csv', graph=True)
-    inbounds = generate_schedule(num_plate=60, graph=True)
-    length = [len(_) for _ in inbounds]
-    print(np.max(length), np.argmax(length))
+    np.random.seed(42)
+
+    num_plate = [200, 250, 300, 350, 400]
+    ins = 5
+
+    for num in num_plate:
+        for j in range(ins):
+            plates = generate_schedule(num_plate=num)
+            data = pd.DataFrame(columns=["plate_id", "inbound", "outbound"])
+            for i, plate in enumerate(plates[0]):
+                data.loc[i] = [plate.id, plate.inbound, plate.outbound]
+            data.to_csv('./data_plate{0}_{1}.csv'.format(num, j), index=False)

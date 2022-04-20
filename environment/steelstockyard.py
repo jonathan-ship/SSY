@@ -4,8 +4,6 @@ import pygame
 import time
 import environment.plate as plate
 
-random.seed = 42
-
 
 # 강재 적치 위치 결정 환경
 class Locating(object):  # 생성자에서 파일의 수, 최대 높이 등을 입력
