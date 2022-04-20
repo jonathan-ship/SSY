@@ -80,33 +80,38 @@ if __name__ == "__main__":
     max_stack = 30
     num_pile = 20
 
-    num_plate = [200, 250, 300, 350, 400]
-    ins = 5
-    iter = 10
+    algorithms = ["minimize_conflicts", "delay_conflicts", "flexibility_optimization"]
+    num_plate = [100, 150, 200, 250, 300, 350, 400]
+    num_instance = 10
 
-    results = pd.DataFrame(index=pd.MultiIndex.from_product([num_plate, [i for i in range(ins)]],
-                                                            names=["number_of_plates", "test_problem"]),
-                           columns=["move_avg", "move_std", "time_avg", "time_std"])
-    for num in num_plate:
-        for j in range(ins):
-            df = pd.read_csv("./environment/data_plate{0}_{1}.csv".format(num, j))
-            plates = [[]]
-            for i, row in df.iterrows():
-                plate = Plate(row['plate_id'], row['inbound'], row['outbound'])
-                plates[0].append(plate)
+    result_path = './benchmark/result/'
+    if not os.path.exists(result_path):
+        os.makedirs(result_path)
 
+    for algo in algorithms:
+        results = pd.DataFrame(index=num_plate, columns=["move", "time"])
+        for num_p in num_plate:
             moves = []
             times = []
-            for k in range(iter):
+            for num_i in range(num_instance):
+                df = pd.read_csv("./environment/data_plate{0}_{1}.csv".format(num_p, num_i))
+                plates = [[]]
+                for i, row in df.iterrows():
+                    plate = Plate(row['plate_id'], row['inbound'], row['outbound'])
+                    plates[0].append(plate)
+
                 env = Locating(max_stack=max_stack, num_pile=num_pile, inbound_plates=plates)
 
                 start = time()
                 s = env.reset()
 
                 while True:
-                    a = minimize_conflicts(s, env)
-                    # a = delay_conflicts(s, env)
-                    # a = flexibility_optimization(s, env)
+                    if algo == "minimize_conflicts":
+                        a = minimize_conflicts(s, env)
+                    elif algo == "delay_conflicts":
+                        a = delay_conflicts(s, env)
+                    elif algo == "flexibility_optimization":
+                        a = flexibility_optimization(s, env)
                     s1, r, d = env.step(a)
                     s = s1
 
@@ -116,9 +121,7 @@ if __name__ == "__main__":
                         moves.append(env.crane_move)
                         break
             time_avg = np.mean(times)
-            time_std = np.std(times)
             move_avg = np.mean(moves)
-            move_std = np.std(moves)
-            results.loc[num, j] = [move_avg, move_std, time_avg, time_std]
+            results.loc[num_p] = [move_avg, time_avg]
 
-    results.to_csv("final.csv")
+        results.to_csv(result_path + "final_{0}.csv".format(algo))

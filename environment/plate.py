@@ -167,10 +167,15 @@ class Plate(object):
 
 
 if __name__ == "__main__":
+    import os
     np.random.seed(42)
 
-    num_plate = [200, 250, 300, 350, 400]
-    ins = 5
+    num_plate = [100, 150, 200, 250, 300, 350, 400]
+    ins = 10
+
+    data_path = './benchmark/data/'
+    if not os.path.exists(data_path):
+        os.makedirs(data_path)
 
     for num in num_plate:
         for j in range(ins):
@@ -178,4 +183,4 @@ if __name__ == "__main__":
             data = pd.DataFrame(columns=["plate_id", "inbound", "outbound"])
             for i, plate in enumerate(plates[0]):
                 data.loc[i] = [plate.id, plate.inbound, plate.outbound]
-            data.to_csv('./data_plate{0}_{1}.csv'.format(num, j), index=False)
+            data.to_csv('./benchmark/data/data_plate{0}_{1}.csv'.format(num, j), index=False)
