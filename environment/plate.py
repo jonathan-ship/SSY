@@ -171,16 +171,16 @@ if __name__ == "__main__":
     np.random.seed(42)
 
     num_plate = [100, 150, 200, 250, 300, 350, 400]
-    ins = 10
+    num_instance = 10
 
-    data_path = './benchmark/data/'
+    data_path = '../benchmark/data/'
     if not os.path.exists(data_path):
         os.makedirs(data_path)
 
-    for num in num_plate:
-        for j in range(ins):
-            plates = generate_schedule(num_plate=num)
+    for num_p in num_plate:
+        for num_i in range(num_instance):
+            plates = generate_schedule(num_plate=num_p)
             data = pd.DataFrame(columns=["plate_id", "inbound", "outbound"])
             for i, plate in enumerate(plates[0]):
                 data.loc[i] = [plate.id, plate.inbound, plate.outbound]
-            data.to_csv('./benchmark/data/data_plate{0}_{1}.csv'.format(num, j), index=False)
+            data.to_csv(data_path + 'data_plate{0}_{1}.csv'.format(num_p, num_i), index=False)

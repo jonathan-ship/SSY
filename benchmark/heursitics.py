@@ -1,3 +1,4 @@
+import os
 import numpy as np
 from time import time
 
@@ -44,7 +45,7 @@ def delay_conflicts(s, env):
         idx_pos = np.logical_or(np.logical_and(idx_max_Es, idx_not_full), idx_empty)
         a = np.random.choice(a_s[idx_pos])
     else:
-        idx_pos = np.logical_or(idx_es, idx_empty)
+        idx_pos = np.logical_or(np.logical_and(idx_es, idx_not_full), idx_empty)
         a = np.random.choice(a_s[idx_pos])
 
     return a
@@ -80,11 +81,12 @@ if __name__ == "__main__":
     max_stack = 30
     num_pile = 20
 
-    algorithms = ["minimize_conflicts", "delay_conflicts", "flexibility_optimization"]
+    #algorithms = ["minimize_conflicts", "delay_conflicts", "flexibility_optimization"]
+    algorithms = ["delay_conflicts"]
     num_plate = [100, 150, 200, 250, 300, 350, 400]
     num_instance = 10
 
-    result_path = './benchmark/result/'
+    result_path = './result/'
     if not os.path.exists(result_path):
         os.makedirs(result_path)
 
@@ -94,7 +96,7 @@ if __name__ == "__main__":
             moves = []
             times = []
             for num_i in range(num_instance):
-                df = pd.read_csv("./environment/data_plate{0}_{1}.csv".format(num_p, num_i))
+                df = pd.read_csv("./data/data_plate{0}_{1}.csv".format(num_p, num_i))
                 plates = [[]]
                 for i, row in df.iterrows():
                     plate = Plate(row['plate_id'], row['inbound'], row['outbound'])
