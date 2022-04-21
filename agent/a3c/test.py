@@ -23,8 +23,8 @@ if __name__ == '__main__':
 
     model_path = './results/models/%d-%d' % s_shape
 
-    num_plate = [100, 150, 200, 250, 300, 350, 400]
-    num_instance = 10
+    num_plate = [100, 120, 140, 160, 180, 200]
+    num_test = 30
 
     result_path = './results/test/'
     if not os.path.exists(result_path):
@@ -63,11 +63,11 @@ if __name__ == '__main__':
                                    network.state_in[0]: rnn_state[0],
                                    network.state_in[1]: rnn_state[1]})
 
-                    s_temp = s.reshape((env.max_stack, env.action_space + 1))[:, 1:]
-                    a_s = np.array([i for i in range(env.action_space)])
-                    idx_full = (np.min(s_temp, axis=0) != -1)
-                    a_dist[0][idx_full] = 0
-                    a_dist[0] = a_dist[0] / (sum(a_dist[0]))
+                    # s_temp = s.reshape((env.max_stack, env.action_space + 1))[:, 1:]
+                    # a_s = np.array([i for i in range(env.action_space)])
+                    # idx_full = (np.min(s_temp, axis=0) != -1)
+                    # a_dist[0][idx_full] = 0
+                    # a_dist[0] = a_dist[0] / (sum(a_dist[0]))
 
                     a = np.random.choice(a_dist[0], p=a_dist[0])
                     a = np.argmax(a_dist == a)

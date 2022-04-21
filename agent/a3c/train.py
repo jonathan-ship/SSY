@@ -188,7 +188,7 @@ if __name__ == '__main__':
     # inbounds = import_plates_schedule_by_week('../../environment/data/SampleData.csv')
     # inbounds = generate_schedule(num_plate=50)
     max_episode_length = 300
-    max_episode = 250001
+    max_episode = 50001
     gamma = .99  # discount rate for advantage estimation and reward discounting
 
     max_stack = 30
@@ -218,12 +218,12 @@ if __name__ == '__main__':
 
     with tf.device("/cpu:0"):
         global_episodes = tf.Variable(0, dtype=tf.int32, name='global_episodes', trainable=False)
-        trainer = tf.train.AdamOptimizer(learning_rate=1e-5)
+        trainer = tf.train.AdamOptimizer(learning_rate=5e-5)
         master_network = AC_Network(s_shape, a_size, 'global', None)  # Generate global network
         num_workers = multiprocessing.cpu_count()  # Set workers to number of available CPU threads
         workers = []
         # Create worker classes
-        for i in range(num_workers):
+        for i in range(12):
             locating = Locating(max_stack=max_stack, num_pile=num_pile,
                                 observe_inbounds=observe_inbounds, display_env=False)
             workers.append(Worker(locating, i, s_shape, a_size, trainer, model_path, summary_path, global_episodes))

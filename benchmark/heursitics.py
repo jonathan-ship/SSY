@@ -6,6 +6,13 @@ from environment.steelstockyard import Locating
 from environment.plate import *
 
 
+def random_stacking(s, env):
+    s = s.reshape((env.max_stack, env.action_space))
+    a_s = np.array([i for i in range(env.action_space)])
+    idx_not_full = (np.min(s, axis=0) == -1)
+    a = np.random.choice(a_s[idx_not_full])
+    return a
+
 def minimize_conflicts(s, env):
     s = s.reshape((env.max_stack, env.action_space))
     a_s = np.array([i for i in range(env.action_space)])
@@ -22,7 +29,7 @@ def minimize_conflicts(s, env):
         idx_pos = idx_not_full
         a = np.random.choice(a_s[idx_pos])
     else:
-        idx_pos = np.logical_or(idx_es, idx_empty)
+        idx_pos = np.logical_or(np.logical_and(idx_es, idx_not_full), idx_empty)
         a = np.random.choice(a_s[idx_pos])
 
     return a
@@ -49,6 +56,7 @@ def delay_conflicts(s, env):
         a = np.random.choice(a_s[idx_pos])
 
     return a
+
 
 def flexibility_optimization(s, env):
     s = s.reshape((env.max_stack, env.action_space))
@@ -81,10 +89,11 @@ if __name__ == "__main__":
     max_stack = 30
     num_pile = 20
 
-    #algorithms = ["minimize_conflicts", "delay_conflicts", "flexibility_optimization"]
-    algorithms = ["delay_conflicts"]
-    num_plate = [100, 150, 200, 250, 300, 350, 400]
-    num_instance = 10
+    algorithms = ["minimize_conflicts", "delay_conflicts", "flexibility_optimization", "random"]
+    # algorithms = ["flexibility_optimization"]
+    num_plate = [100, 120, 140, 160, 180, 200]
+    num_instance = 1
+    num_test = 30
 
     result_path = './result/'
     if not os.path.exists(result_path):
@@ -114,6 +123,8 @@ if __name__ == "__main__":
                         a = delay_conflicts(s, env)
                     elif algo == "flexibility_optimization":
                         a = flexibility_optimization(s, env)
+                    elif algo == "random":
+                        a = random_stacking(s, env)
                     s1, r, d = env.step(a)
                     s = s1
 

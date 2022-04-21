@@ -78,8 +78,8 @@ if __name__ == '__main__':
     max_stack = 30
     num_pile = 20
 
-    num_plate = [100, 150, 200, 250, 300, 350, 400]
-    num_instance = 10
+    num_plate = [100, 120, 140, 160, 180, 200]
+    num_instance = 30
 
     result_path = './result/'
     if not os.path.exists(result_path):
@@ -90,6 +90,7 @@ if __name__ == '__main__':
         moves = []
         times = []
         for num_i in range(num_instance):
+            print("the number of plates : {0} | test-{1}".format(num_p, num_i))
             df = pd.read_csv("./data/data_plate{0}_{1}.csv".format(num_p, num_i))
             plates = [[]]
             for i, row in df.iterrows():
@@ -108,9 +109,9 @@ if __name__ == '__main__':
             last_fitness = 0
             def on_generation(ga_instance):
                 global last_fitness
-                print("Generation = {generation}".format(generation=ga_instance.generations_completed))
-                print("Fitness    = {fitness}".format(
-                    fitness=-ga_instance.best_solution(pop_fitness=ga_instance.last_generation_fitness)[1]))
+                # print("Generation = {generation}".format(generation=ga_instance.generations_completed))
+                # print("Fitness    = {fitness}".format(
+                #     fitness=-ga_instance.best_solution(pop_fitness=ga_instance.last_generation_fitness)[1]))
 
             start = time()
 

@@ -49,7 +49,7 @@ def import_plates_schedule(filepath, graph=False):
     return plates
 
 
-def generate_schedule(num_plate=254, graph=False):
+def generate_schedule(num_plate=100, graph=False):
     inter_arrival_time = np.floor(stats.expon.rvs(loc=0.0, scale=0.273, size=num_plate))
     stock_time = np.floor(stats.beta.rvs(1.85, 32783.4, loc=2.52, scale=738938.8, size=num_plate))
     #inter_arrival_time = [0 for _ in range(num_plate)]
@@ -170,8 +170,8 @@ if __name__ == "__main__":
     import os
     np.random.seed(42)
 
-    num_plate = [100, 150, 200, 250, 300, 350, 400]
-    num_instance = 10
+    num_plate = [100, 120, 140, 160, 180, 200]
+    num_instance = 1
 
     data_path = '../benchmark/data/'
     if not os.path.exists(data_path):
